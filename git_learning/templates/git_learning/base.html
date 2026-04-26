@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<!--
+=============================================================================
+FILE: base.html
+PURPOSE: The BASE TEMPLATE that all other pages inherit from.
+
+WHAT IS A BASE TEMPLATE? 🏗️
+A base template is like the frame of a house — it defines the structure
+that ALL pages share: the navigation bar, the header, the footer.
+Individual page templates then "fill in" only their unique content.
+
+In Django templates:
+- block content / endblock = a placeholder slot
+- Child templates fill these slots with their specific content
+- Everything OUTSIDE the blocks appears on EVERY page
+=============================================================================
+-->
+<html lang="de">
+<head>
+    <!-- meta charset tells the browser to use Unicode (supports all languages/emojis) -->
+    <meta charset="UTF-8">
+    <!-- viewport meta tag makes the page look good on phones and tablets (responsive) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- block title is a Django template tag — child pages can override this -->
+    <title>{% block title %}Versionskontroll-Workflow{% endblock %} | Git Learning Platform</title>
+
+    <!-- Google Fonts — we use 'Space Mono' for code-feel headers and 'DM Sans' for body -->
+    <!-- These are loaded from Google's servers for free -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* CSS CUSTOM PROPERTIES (CSS Variables) — the design system */
+        /* Think of these like variables in programming — define once, use everywhere */
+        :root {
+            /* Color palette — a dark, code-editor inspired theme */
+            --bg-primary: #0d1117;      /* Main background — GitHub dark mode inspired */
+            --bg-secondary: #161b22;    /* Card backgrounds — slightly lighter */
+            --bg-tertiary: #21262d;     /* Hover states and borders */
+            --bg-code: #0d1117;         /* Code block backgrounds */
+
+            /* Accent colors */
+            --accent-green: #3fb950;    /* Success, additions */
+            --accent-blue: #58a6ff;     /* Links, info */
+            --accent-purple: #bc8cff;   /* Features, special */
+            --accent-amber: #d29922;    /* Warnings, documentation */
+            --accent-red: #f85149;      /* Errors, deletions */
+            --accent-cyan: #39d353;     /* Tests */
+
+            /* Text colors */
+            --text-primary: #e6edf3;    /* Main text — slightly off-white for comfort */
+            --text-secondary: #8b949e;  /* Muted text — captions, labels */
+            --text-muted: #484f58;      /* Very subtle text */
+            --text-code: #ff7b72;       /* Code snippets inline */
+
+            /* Border colors */
+            --border-default: #30363d;  /* Standard borders */
+            --border-muted: #21262d;    /* Subtle borders */
+
+            /* Typography */
+            --font-display: 'Space Mono', monospace;  /* Headers — code aesthetic */
+            --font-body: 'DM Sans', sans-serif;        /* Body text — readable */
+            --font-code: 'Fira Code', monospace;       /* Code blocks */
+
+            /* Spacing scale */
+            --space-1: 0.25rem;  /* 4px */
+            --space-2: 0.5rem;   /* 8px */
+            --space-3: 0.75rem;  /* 12px */
+            --space-4: 1rem;     /* 16px */
+            --space-6: 1.5rem;   /* 24px */
+            --space-8: 2rem;     /* 32px */
+            --space-12: 3rem;    /* 48px */
+            --space-16: 4rem;    /* 64px */
+
+            /* Border radius */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+
+            /* Transitions */
+            --transition: 200ms ease;
+        }
+
+        /* CSS Reset — remove browser default styling inconsistencies */
+        *, *::before, *::after {
+            box-sizing: border-box;  /* Include padding/border in element's total width/height */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Base body styles */
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            min-height: 100vh;  /* vh = viewport height — fills at least the whole screen */
+        }
+
+        /* =================================================================
+           NAVIGATION BAR
+        ================================================================= */
+        .nav {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-default);
+            position: sticky;  /* Stays at top of screen while scrolling */
+            top: 0;
+            z-index: 100;  /* Appears above other elements */
+            backdrop-filter: blur(8px);  /* Frosted glass effect */
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-4) var(--space-6);
+            display: flex;  /* Flexbox — arranges items in a row/column */
+            align-items: center;
+            justify-content: space-between;  /* Logo left, links right */
+            gap: var(--space-6);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .nav-logo-text {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .nav-logo-sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            list-style: none;  /* Remove bullet points from the list */
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .nav-links a.active {
+            color: var(--accent-green);
+        }
+
+        /* Mobile hamburger — hidden on desktop */
+        .nav-mobile-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-default);
+            color: var(--text-primary);
+            padding: var(--space-2);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* =================================================================
+           PAGE HEADER BANNER
+        ================================================================= */
+        .page-header {
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border-default);
+            padding: var(--space-12) var(--space-6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative grid pattern in the background */
+        .page-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;  /* Shorthand for top/right/bottom/left: 0 */
+            background-image:
+                linear-gradient(var(--border-muted) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-muted) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.4;
+        }
+
+        .page-header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;  /* Above the ::before pseudo-element */
+        }
+
+        .page-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            color: var(--accent-green);
+            background: rgba(63, 185, 80, 0.1);
+            border: 1px solid rgba(63, 185, 80, 0.3);
+            padding: var(--space-1) var(--space-3);
+            border-radius: 999px;  /* Pill shape */
+            margin-bottom: var(--space-4);
+        }
+
+        .page-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.75rem, 5vw, 3rem);  /* clamp = min, ideal, max */
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: var(--space-4);
+            letter-spacing: -0.02em;
+        }
+
+        .page-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 640px;
+            line-height: 1.7;
+        }
+
+        /* =================================================================
+           MAIN CONTENT CONTAINER
+        ================================================================= */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--space-8) var(--space-6);
+        }
+
+        /* =================================================================
+           CARD COMPONENTS
+        ================================================================= */
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            transition: border-color var(--transition), transform var(--transition);
+        }
+
+        .card:hover {
+            border-color: var(--border-muted);
+            transform: translateY(-2px);  /* Subtle lift on hover */
+        }
+
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;  /* Don't shrink when there's not enough space */
+        }
+
+        /* Color variants for card icons */
+        .icon-blue { background: rgba(88, 166, 255, 0.15); }
+        .icon-emerald { background: rgba(63, 185, 80, 0.15); }
+        .icon-violet { background: rgba(188, 140, 255, 0.15); }
+        .icon-amber { background: rgba(210, 153, 34, 0.15); }
+        .icon-rose { background: rgba(248, 81, 73, 0.15); }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: var(--space-1);
+            line-height: 1.3;
+        }
+
+        .card-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: var(--font-code);
+        }
+
+        /* =================================================================
+           BADGES / TAGS
+        ================================================================= */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: 0.7rem;
+            font-family: var(--font-code);
+            font-weight: 500;
+            padding: 2px var(--space-2);
+            border-radius: var(--radius-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-permanent {
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(63, 185, 80, 0.3);
+        }
+
+        .badge-temporary {
+            background: rgba(248, 81, 73, 0.1);
+            color: var(--accent-red);
+            border: 1px solid rgba(248, 81, 73, 0.3);
+        }
+
+        .badge-type {
+            background: rgba(88, 166, 255, 0.1);
+            color: var(--accent-blue);
+            border: 1px solid rgba(88, 166, 255, 0.3);
+        }
+
+        /* =================================================================
+           CODE BLOCKS
+        ================================================================= */
+        .code-block {
+            background: var(--bg-code);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            font-family: var(--font-code);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            overflow-x: auto;  /* Allow horizontal scrolling if code is wide */
+            color: var(--accent-green);
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);  /* Gets the data-lang attribute value */
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-3);
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* Inline code — used inside sentences */
+        code {
+            font-family: var(--font-code);
+            font-size: 0.875em;
+            color: var(--text-code);
+            background: rgba(248, 81, 73, 0.1);
+            padding: 1px var(--space-2);
+            border-radius: var(--radius-sm);
+        }
+
+        /* =================================================================
+           SECTION HEADINGS
+        ================================================================= */
+        .section-heading {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid var(--border-default);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .section-heading::before {
+            content: '##';
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* =================================================================
+           GRID LAYOUTS
+        ================================================================= */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--space-4);
+        }
+
+        /* =================================================================
+           LIST STYLES
+        ================================================================= */
+        .styled-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .styled-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-3);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .styled-list li::before {
+            content: '→';
+            color: var(--accent-green);
+            font-family: var(--font-code);
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* =================================================================
+           PROS / CONS LISTS
+        ================================================================= */
+        .pros-list li::before { content: '+'; color: var(--accent-green); font-weight: bold; }
+        .cons-list li::before { content: '−'; color: var(--accent-red); font-weight: bold; }
+
+        /* =================================================================
+           TABS COMPONENT
+        ================================================================= */
+        .tabs {
+            border-bottom: 1px solid var(--border-default);
+            display: flex;
+            gap: 0;
+            margin-bottom: var(--space-6);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            padding: var(--space-3) var(--space-4);
+            color: var(--text-secondary);
+            font-family: var(--font-body);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover { color: var(--text-primary); }
+
+        .tab-btn.active {
+            color: var(--accent-green);
+            border-bottom-color: var(--accent-green);
+        }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        /* =================================================================
+           COMMIT MESSAGE DISPLAY
+        ================================================================= */
+        .commit-msg {
+            font-family: var(--font-code);
+            font-size: 0.875rem;
+            padding: var(--space-3) var(--space-4);
+            border-radius: var(--radius-md);
+            border-left: 3px solid;
+            margin-bottom: var(--space-2);
+        }
+
+        .commit-good {
+            background: rgba(63, 185, 80, 0.08);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .commit-bad {
+            background: rgba(248, 81, 73, 0.08);
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+        }
+
+        /* =================================================================
+           STEP INDICATORS
+        ================================================================= */
+        .step {
+            display: flex;
+            gap: var(--space-4);
+            align-items: flex-start;
+            margin-bottom: var(--space-6);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-code);
+            font-size: 0.8rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            color: var(--bg-primary);
+        }
+
+        .step-content h4 {
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+        }
+
+        .step-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-2);
+        }
+
+        /* =================================================================
+           FOOTER
+        ================================================================= */
+        .footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-default);
+            padding: var(--space-8) var(--space-6);
+            margin-top: var(--space-16);
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-family: var(--font-code);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: var(--space-4);
+        }
+
+        .footer-links a {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        .footer-links a:hover { color: var(--accent-green); }
+
+        /* =================================================================
+           UTILITY CLASSES
+        ================================================================= */
+        .text-muted { color: var(--text-secondary); }
+        .text-code { font-family: var(--font-code); }
+        .text-small { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .mt-4 { margin-top: var(--space-4); }
+        .mt-6 { margin-top: var(--space-6); }
+        .mt-8 { margin-top: var(--space-8); }
+        .mb-4 { margin-bottom: var(--space-4); }
+        .mb-6 { margin-bottom: var(--space-6); }
+
+        /* Color text utilities */
+        .text-green { color: var(--accent-green); }
+        .text-blue { color: var(--accent-blue); }
+        .text-purple { color: var(--accent-purple); }
+        .text-amber { color: var(--accent-amber); }
+        .text-red { color: var(--accent-red); }
+
+        /* =================================================================
+           MOBILE RESPONSIVE
+        ================================================================= */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }  /* Hide nav links on mobile */
+            .nav-links.open { display: flex; flex-direction: column; }
+            .nav-mobile-toggle { display: block; }
+
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;  /* Single column on mobile */
+            }
+
+            .page-header {
+                padding: var(--space-8) var(--space-4);
+            }
+
+            .main-content {
+                padding: var(--space-6) var(--space-4);
+            }
+        }
+
+        /* =================================================================
+           ANIMATIONS
+        ================================================================= */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.4s ease forwards;
+        }
+
+        .animate-delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .animate-delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .animate-delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .animate-delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+    </style>
+
+    <!-- Any extra CSS or JS that child pages need can go in this block -->
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- ================================================================
+         NAVIGATION BAR
+    ================================================================ -->
+    <nav class="nav">
+        <div class="nav-inner">
+
+            <!-- Logo / Brand -->
+            <a href="{% url 'git_learning:home' %}" class="nav-logo">
+                <!-- {% url 'git_learning:home' %} is a Django template tag that generates
+                     the URL for the 'home' view in the 'git_learning' app namespace -->
+                <div class="nav-logo-icon">🌿</div>
+                <div class="nav-logo-text">
+                    Versionskontroll
+                    <span class="nav-logo-sub">Git Workflow Learning Platform</span>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <!-- Django's 'request.resolver_match.url_name' tells us the current page name -->
+            <ul class="nav-links" id="nav-links">
+                <li>
+                    <a href="{% url 'git_learning:home' %}"
+                       class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+                        🏠 Home
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'git_learning:branching' %}"
+                       class="{% if request.resolver_match.url_name == 'branching' %}active{% endif %}">
+                        🌿 Branching
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'git_learning:commits' %}"
+                       class="{% if request.resolver_match.url_name == 'commits' %}active{% endif %}">
+                        💾 Commits
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'git_learning:collaboration' %}"
+                       class="{% if request.resolver_match.url_name == 'collaboration' %}active{% endif %}">
+                        🤝 Collaboration
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'git_learning:documentation' %}"
+                       class="{% if request.resolver_match.url_name == 'documentation' %}active{% endif %}">
+                        📚 Docs
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Mobile toggle button -->
+            <button class="nav-mobile-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                ☰
+            </button>
+        </div>
+    </nav>
+
+    <!-- ================================================================
+         PAGE HEADER — Child templates can fill this block with their header
+    ================================================================ -->
+    {% block page_header %}{% endblock %}
+
+    <!-- ================================================================
+         MAIN CONTENT AREA — This is where each page puts its unique content
+    ================================================================ -->
+    <main>
+        {% block content %}
+        <!-- Child templates fill this block with their specific page content -->
+        {% endblock %}
+    </main>
+
+    <!-- ================================================================
+         FOOTER
+    ================================================================ -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <span class="footer-text">
+                <!-- The pipe character | is used as a separator -->
+                🌿 Versionskontroll-Workflow | Git Learning Platform
+            </span>
+            <div class="footer-links">
+                <a href="{% url 'git_learning:home' %}">Home</a>
+                <a href="{% url 'git_learning:branching' %}">Branching</a>
+                <a href="{% url 'git_learning:commits' %}">Commits</a>
+                <a href="{% url 'git_learning:collaboration' %}">Collaboration</a>
+                <a href="{% url 'git_learning:documentation' %}">Docs</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for interactive elements (tabs, mobile nav) -->
+    <script>
+        // Mobile navigation toggle
+        // 'document.getElementById' finds an HTML element by its id attribute
+        const navToggle = document.getElementById('nav-toggle');
+        const navLinks = document.getElementById('nav-links');
+
+        if (navToggle) {
+            // 'addEventListener' means "when this event happens, run this function"
+            navToggle.addEventListener('click', () => {
+                // 'classList.toggle' adds the class if it's not there, removes it if it is
+                navLinks.classList.toggle('open');
+            });
+        }
+
+        // Tabs component JavaScript
+        // 'document.querySelectorAll' finds ALL elements matching a CSS selector
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Find the parent tabs container
+                const tabsContainer = btn.closest('[data-tabs]');
+                if (!tabsContainer) return;
+
+                // Remove 'active' class from all tab buttons in this container
+                tabsContainer.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                // Remove 'active' class from all tab panels in this container
+                tabsContainer.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+                // Add 'active' to the clicked button
+                btn.classList.add('active');
+                // Find and show the corresponding panel (matched by data-tab attribute)
+                const targetPanel = tabsContainer.querySelector(`[data-panel="${btn.dataset.tab}"]`);
+                if (targetPanel) targetPanel.classList.add('active');
+            });
+        });
+    </script>
+
+    <!-- Allow child pages to add their own JavaScript at the bottom -->
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

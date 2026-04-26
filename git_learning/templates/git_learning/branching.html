@@ -1,0 +1,370 @@
+{% extends "git_learning/base.html" %}
+
+{% block title %}Branching Strategies{% endblock %}
+
+{% block page_header %}
+<header class="page-header">
+    <div class="page-header-inner">
+        <div class="page-badge">🌿 Branching</div>
+        <h1 class="page-title">{{ page_title }}</h1>
+        <p class="page-description">{{ page_description }}</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+
+    {# ================================================================
+       WHAT IS A BRANCH — beginner explainer box
+    ================================================================ #}
+    <div class="explainer-box mb-8">
+        <div class="explainer-icon">💡</div>
+        <div class="explainer-content">
+            <h3>What is a Branch?</h3>
+            <p>
+                Imagine you're writing a book. You want to try a different ending without losing your original.
+                You make a photocopy (a <strong>branch</strong>), write the new ending on the copy, and decide later
+                which version you prefer. If you like the new ending, you <strong>merge</strong> it back into the original.
+                In Git, branches work the same way — safely isolated copies of your code.
+            </p>
+        </div>
+    </div>
+
+    {# ================================================================
+       WORKFLOW CARDS
+    ================================================================ #}
+    {% for workflow in workflows %}
+    {# Loop through all workflows — each 'workflow' is a dict from our service #}
+    <section class="workflow-section mb-8" id="{{ workflow.name|lower|slugify }}">
+        {# |lower = lowercase filter, |slugify = converts to URL-safe format e.g. "git flow" → "git-flow" #}
+
+        <div class="workflow-header workflow-header-{{ workflow.color }}">
+            <div class="workflow-header-inner">
+                <div class="workflow-label">Branching Strategy</div>
+                <h2 class="workflow-title">{{ workflow.name }}</h2>
+                <p class="workflow-description">{{ workflow.description }}</p>
+            </div>
+        </div>
+
+        <div class="workflow-body">
+
+            {# BRANCHES — the core of any strategy #}
+            <div class="workflow-section-block">
+                <h3 class="block-title">🌿 Branches Used</h3>
+                <div class="branches-grid">
+                    {% for branch in workflow.branches %}
+                    <div class="branch-card branch-{{ branch.type }}">
+                        <div class="branch-card-top">
+                            <code class="branch-name">{{ branch.name }}</code>
+                            <span class="badge badge-{{ branch.type }}">{{ branch.type }}</span>
+                        </div>
+                        <p class="branch-description">{{ branch.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="workflow-two-col">
+
+                {# PROS #}
+                <div class="workflow-section-block">
+                    <h3 class="block-title text-green">✅ Advantages</h3>
+                    <ul class="styled-list pros-list">
+                        {% for pro in workflow.pros %}
+                        <li>{{ pro }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                {# CONS #}
+                <div class="workflow-section-block">
+                    <h3 class="block-title text-red">⚠️ Challenges</h3>
+                    <ul class="styled-list cons-list">
+                        {% for con in workflow.cons %}
+                        <li>{{ con }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+            </div>
+
+            {# USE CASES #}
+            <div class="workflow-section-block">
+                <h3 class="block-title">🎯 When to Use This Strategy</h3>
+                <div class="use-cases-grid">
+                    {% for use_case in workflow.use_cases %}
+                    <div class="use-case-chip">{{ use_case }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </section>
+    {% endfor %}
+
+    {# ================================================================
+       COMPARISON TABLE
+    ================================================================ #}
+    <section class="mb-8">
+        <h2 class="section-heading">Side-by-Side Comparison</h2>
+        <div class="comparison-table-wrapper">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        {% for workflow in workflows %}
+                        <th>{{ workflow.name }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Complexity</td>
+                        <td>High 🔴</td>
+                        <td>Low 🟢</td>
+                        <td>Medium 🟡</td>
+                    </tr>
+                    <tr>
+                        <td>Good for beginners</td>
+                        <td>Sometimes</td>
+                        <td>With discipline</td>
+                        <td>✅ Yes</td>
+                    </tr>
+                    <tr>
+                        <td>Release cadence</td>
+                        <td>Scheduled</td>
+                        <td>Continuous</td>
+                        <td>Flexible</td>
+                    </tr>
+                    <tr>
+                        <td>Branch lifespan</td>
+                        <td>Long-lived</td>
+                        <td>Hours/days</td>
+                        <td>Days/weeks</td>
+                    </tr>
+                    <tr>
+                        <td>Code review via PR</td>
+                        <td>Optional</td>
+                        <td>Optional</td>
+                        <td>✅ Central</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    {# ================================================================
+       GIT COMMANDS CHEAT SHEET
+    ================================================================ #}
+    <section class="mb-8">
+        <h2 class="section-heading">Essential Git Branch Commands</h2>
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title mb-4">Creating & Switching Branches</h3>
+                <div class="code-block" data-lang="bash">
+# Create a new branch (a copy of current branch)
+git checkout -b feature/my-feature
+
+# Or with newer Git syntax:
+git switch -c feature/my-feature
+
+# Switch to an existing branch
+git checkout main
+git switch main
+
+# List all branches (* = current)
+git branch</div>
+            </div>
+            <div class="card">
+                <h3 class="card-title mb-4">Merging & Keeping Up to Date</h3>
+                <div class="code-block" data-lang="bash">
+# Merge another branch INTO current branch
+git merge feature/my-feature
+
+# Get latest changes from the remote server
+git pull origin main
+
+# Update your branch with latest main changes
+git rebase main
+
+# Delete a branch (after merging)
+git branch -d feature/my-feature</div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+    .explainer-box {
+        background: rgba(63, 185, 80, 0.08);
+        border: 1px solid rgba(63, 185, 80, 0.25);
+        border-radius: var(--radius-xl);
+        padding: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    .explainer-icon { font-size: 2rem; flex-shrink: 0; }
+    .explainer-content h3 { font-family: var(--font-display); margin-bottom: 0.5rem; }
+    .explainer-content p { color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; }
+    .explainer-content strong { color: var(--accent-green); }
+
+    .workflow-section {
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+    }
+
+    .workflow-header {
+        padding: 2rem;
+        border-bottom: 1px solid var(--border-default);
+    }
+
+    .workflow-header-blue { background: linear-gradient(135deg, rgba(88,166,255,0.1), rgba(88,166,255,0.03)); }
+    .workflow-header-emerald { background: linear-gradient(135deg, rgba(63,185,80,0.1), rgba(63,185,80,0.03)); }
+    .workflow-header-violet { background: linear-gradient(135deg, rgba(188,140,255,0.1), rgba(188,140,255,0.03)); }
+
+    .workflow-label {
+        font-family: var(--font-code);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+    }
+
+    .workflow-title {
+        font-family: var(--font-display);
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .workflow-description {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        line-height: 1.7;
+        max-width: 700px;
+    }
+
+    .workflow-body { padding: 2rem; background: var(--bg-secondary); }
+
+    .workflow-two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 1.5rem 0;
+    }
+
+    .workflow-section-block { margin-bottom: 1.5rem; }
+
+    .block-title {
+        font-family: var(--font-display);
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+    }
+
+    .branches-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .branch-card {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-lg);
+        padding: 0.875rem;
+    }
+
+    .branch-permanent { border-left: 3px solid var(--accent-green); }
+    .branch-temporary { border-left: 3px solid var(--accent-amber); }
+
+    .branch-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .branch-name {
+        font-family: var(--font-code);
+        font-size: 0.8rem;
+        color: var(--accent-blue);
+        background: transparent;
+        padding: 0;
+    }
+
+    .branch-description {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+
+    .use-cases-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .use-case-chip {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-md);
+        padding: 0.4rem 0.875rem;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    /* Comparison table */
+    .comparison-table-wrapper {
+        overflow-x: auto;
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--border-default);
+    }
+
+    .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+
+    .comparison-table th {
+        background: var(--bg-tertiary);
+        padding: 0.875rem 1.25rem;
+        text-align: left;
+        font-family: var(--font-display);
+        font-size: 0.8rem;
+        font-weight: 700;
+        border-bottom: 1px solid var(--border-default);
+        white-space: nowrap;
+    }
+
+    .comparison-table td {
+        padding: 0.75rem 1.25rem;
+        border-bottom: 1px solid var(--border-muted);
+        color: var(--text-secondary);
+    }
+
+    .comparison-table td:first-child {
+        color: var(--text-primary);
+        font-weight: 500;
+    }
+
+    .comparison-table tr:last-child td { border-bottom: none; }
+    .comparison-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+    @media (max-width: 768px) {
+        .workflow-two-col { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}

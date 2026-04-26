@@ -1,0 +1,474 @@
+{% extends "git_learning/base.html" %}
+
+{% block title %}Documentation{% endblock %}
+
+{% block page_header %}
+<header class="page-header">
+    <div class="page-header-inner">
+        <div class="page-badge">📚 Documentation</div>
+        <h1 class="page-title">{{ page_title }}</h1>
+        <p class="page-description">{{ page_description }}</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+
+    {# ================================================================
+       SOLID PRINCIPLES — Full Explanation
+    ================================================================ #}
+    <section class="mb-8">
+        <h2 class="section-heading">SOLID Principles in This Codebase</h2>
+        <p class="text-muted text-small" style="margin-bottom:1.5rem; color:var(--text-secondary); font-size:0.9rem;">
+            SOLID is a set of 5 design principles that make code easier to understand, maintain, and extend.
+            Below is how each principle is applied in this very project.
+        </p>
+
+        <div class="solid-cards">
+            {% for principle in solid_principles %}
+            <div class="solid-card solid-{{ principle.color }}">
+                <div class="solid-card-left">
+                    <div class="solid-big-letter">{{ principle.letter }}</div>
+                </div>
+                <div class="solid-card-right">
+                    <div class="solid-card-title">{{ principle.name }} Principle</div>
+                    <div class="solid-card-plain">{{ principle.plain_english }}</div>
+                    <div class="solid-card-example">
+                        <span class="solid-in-app">In this app:</span>
+                        {{ principle.example_in_app }}
+                    </div>
+                    <div class="solid-card-file">
+                        <span class="solid-file-label">📄 File(s):</span>
+                        <code>{{ principle.file }}</code>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# ================================================================
+       EXTERNAL RESOURCES
+    ================================================================ #}
+    <section class="mb-8">
+        <h2 class="section-heading">Learning Resources</h2>
+
+        <div class="resources-grid">
+            {% for resource in external_resources %}
+            <a href="{{ resource.url }}" target="_blank" rel="noopener noreferrer" class="resource-card">
+                {# target="_blank" opens link in a new tab #}
+                {# rel="noopener noreferrer" is a security best practice for external links #}
+                <div class="resource-card-top">
+                    <span class="resource-emoji">{{ resource.emoji }}</span>
+                    <span class="resource-category resource-cat-{{ resource.category|lower }}">
+                        {{ resource.category }}
+                    </span>
+                </div>
+                <div class="resource-title">{{ resource.title }}</div>
+                <div class="resource-description">{{ resource.description }}</div>
+                <div class="resource-footer">
+                    <span class="resource-level">{{ resource.level }}</span>
+                    <span class="resource-link">↗ Visit</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# ================================================================
+       GIT CHEAT SHEET
+    ================================================================ #}
+    <section class="mb-8">
+        <h2 class="section-heading">Essential Git Commands Cheat Sheet</h2>
+
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="cheat-section-title">🏁 Getting Started</h3>
+                <div class="code-block" data-lang="bash">
+# Initialize a new repository in current folder
+git init
+
+# Clone (download) an existing repository
+git clone https://github.com/user/repo.git
+
+# Configure your identity (done once)
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"</div>
+            </div>
+
+            <div class="card">
+                <h3 class="cheat-section-title">📸 Staging & Committing</h3>
+                <div class="code-block" data-lang="bash">
+# See what's changed (what Git is tracking)
+git status
+
+# Stage a specific file for committing
+git add filename.py
+
+# Stage ALL changed files
+git add .
+
+# Commit staged changes with a message
+git commit -m "feat: add user login page"
+
+# Stage and commit in one step
+git commit -am "fix: correct form validation"</div>
+            </div>
+
+            <div class="card">
+                <h3 class="cheat-section-title">🌿 Branches</h3>
+                <div class="code-block" data-lang="bash">
+# List all local branches (* = current)
+git branch
+
+# Create new branch from current
+git checkout -b feature/new-feature
+
+# Switch to existing branch
+git checkout main
+
+# Merge another branch into current
+git merge feature/new-feature
+
+# Delete a branch (after merging)
+git branch -d feature/new-feature</div>
+            </div>
+
+            <div class="card">
+                <h3 class="cheat-section-title">🌐 Remote Repositories</h3>
+                <div class="code-block" data-lang="bash">
+# Add a remote (usually done automatically with clone)
+git remote add origin https://github.com/user/repo.git
+
+# Download changes (don't merge yet)
+git fetch origin
+
+# Download AND merge latest changes
+git pull origin main
+
+# Upload your commits to remote
+git push origin feature/my-branch</div>
+            </div>
+
+            <div class="card">
+                <h3 class="cheat-section-title">⏪ Undoing Things</h3>
+                <div class="code-block" data-lang="bash">
+# Fix the last commit message (before pushing!)
+git commit --amend -m "corrected message"
+
+# Undo last commit but KEEP the changes
+git reset --soft HEAD~1
+
+# Undo last commit and REMOVE the changes (careful!)
+git reset --hard HEAD~1
+
+# Discard changes in a file (revert to last commit)
+git checkout -- filename.py</div>
+            </div>
+
+            <div class="card">
+                <h3 class="cheat-section-title">🔍 History & Logs</h3>
+                <div class="code-block" data-lang="bash">
+# See commit history
+git log
+
+# Compact one-line view
+git log --oneline
+
+# See a visual branch graph
+git log --oneline --graph --all
+
+# See what changed in a specific commit
+git show abc1234
+
+# Search commits by message
+git log --grep="feat"</div>
+            </div>
+
+        </div>
+    </section>
+
+    {# ================================================================
+       GLOSSARY
+    ================================================================ #}
+    <section class="mb-8">
+        <h2 class="section-heading">Git Glossary for Beginners</h2>
+        <div class="glossary-grid">
+            <div class="glossary-item">
+                <div class="glossary-term">Repository (Repo)</div>
+                <div class="glossary-def">The folder that contains your project AND all its Git history. Like a project folder with superpowers.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Branch</div>
+                <div class="glossary-def">A parallel copy of the code where you can make changes without affecting the main version.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Commit</div>
+                <div class="glossary-def">A saved snapshot of your code at a specific point, with a message describing what changed.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Merge</div>
+                <div class="glossary-def">Combining changes from one branch into another. Like merging two documents into one.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Remote</div>
+                <div class="glossary-def">The version of your repository stored on a server (e.g., GitHub). Your "backup in the cloud."</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Clone</div>
+                <div class="glossary-def">Downloading a repository from a remote server to your local computer.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Push</div>
+                <div class="glossary-def">Uploading your local commits to the remote server (GitHub/GitLab).</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Pull</div>
+                <div class="glossary-def">Downloading the latest changes from the remote server AND merging them into your local copy.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Pull Request (PR)</div>
+                <div class="glossary-def">A formal request to merge your branch into another. Teammates review the code before it's accepted.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">HEAD</div>
+                <div class="glossary-def">Git's pointer to the current commit you're working on. Like a bookmark in your commit history.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Staging Area</div>
+                <div class="glossary-def">A waiting room for changes before they're committed. You choose what goes in before saving.</div>
+            </div>
+            <div class="glossary-item">
+                <div class="glossary-term">Merge Conflict</div>
+                <div class="glossary-def">When two developers changed the same line differently — Git asks a human to decide which version to keep.</div>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+    /* SOLID cards */
+    .solid-cards { display: flex; flex-direction: column; gap: 1rem; }
+
+    .solid-card {
+        display: flex;
+        gap: 0;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        transition: transform 0.2s;
+    }
+
+    .solid-card:hover { transform: translateX(4px); }
+
+    .solid-card-left {
+        width: 80px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .solid-big-letter {
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .solid-card-right {
+        flex: 1;
+        padding: 1.25rem;
+        border-left: 1px solid var(--border-default);
+    }
+
+    .solid-card-title {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.3rem;
+    }
+
+    .solid-card-plain {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.75rem;
+        font-style: italic;
+    }
+
+    .solid-card-example {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+    }
+
+    .solid-in-app {
+        color: var(--accent-green);
+        font-weight: 600;
+        margin-right: 0.4rem;
+    }
+
+    .solid-card-file {
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .solid-file-label { color: var(--text-muted); }
+
+    .solid-card-file code {
+        font-family: var(--font-code);
+        font-size: 0.78rem;
+        color: var(--accent-blue);
+        background: rgba(88, 166, 255, 0.1);
+    }
+
+    /* Color accents */
+    .solid-blue .solid-card-left { background: rgba(88, 166, 255, 0.08); }
+    .solid-blue .solid-big-letter { color: var(--accent-blue); }
+
+    .solid-emerald .solid-card-left { background: rgba(63, 185, 80, 0.08); }
+    .solid-emerald .solid-big-letter { color: var(--accent-green); }
+
+    .solid-violet .solid-card-left { background: rgba(188, 140, 255, 0.08); }
+    .solid-violet .solid-big-letter { color: var(--accent-purple); }
+
+    .solid-amber .solid-card-left { background: rgba(210, 153, 34, 0.08); }
+    .solid-amber .solid-big-letter { color: var(--accent-amber); }
+
+    .solid-rose .solid-card-left { background: rgba(248, 81, 73, 0.08); }
+    .solid-rose .solid-big-letter { color: var(--accent-red); }
+
+    /* Resource cards */
+    .resources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .resource-card {
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-xl);
+        padding: 1.25rem;
+        text-decoration: none;
+        color: var(--text-primary);
+        transition: all 0.2s;
+    }
+
+    .resource-card:hover {
+        border-color: var(--accent-blue);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(88, 166, 255, 0.1);
+    }
+
+    .resource-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+    }
+
+    .resource-emoji { font-size: 1.75rem; }
+
+    .resource-category {
+        font-family: var(--font-code);
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 2px 8px;
+        border-radius: var(--radius-sm);
+        border: 1px solid;
+    }
+
+    .resource-cat-official { color: var(--accent-green); background: rgba(63,185,80,0.1); border-color: rgba(63,185,80,0.3); }
+    .resource-cat-tutorial { color: var(--accent-blue); background: rgba(88,166,255,0.1); border-color: rgba(88,166,255,0.3); }
+    .resource-cat-interactive { color: var(--accent-purple); background: rgba(188,140,255,0.1); border-color: rgba(188,140,255,0.3); }
+    .resource-cat-reference { color: var(--accent-amber); background: rgba(210,153,34,0.1); border-color: rgba(210,153,34,0.3); }
+    .resource-cat-guide { color: var(--accent-cyan); background: rgba(57,211,83,0.1); border-color: rgba(57,211,83,0.3); }
+    .resource-cat-standard { color: var(--accent-red); background: rgba(248,81,73,0.1); border-color: rgba(248,81,73,0.3); }
+    .resource-cat-troubleshooting { color: #f0883e; background: rgba(240,136,62,0.1); border-color: rgba(240,136,62,0.3); }
+
+    .resource-title {
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .resource-description {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        flex: 1;
+        margin-bottom: 0.75rem;
+    }
+
+    .resource-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border-muted);
+    }
+
+    .resource-level {
+        font-family: var(--font-code);
+        font-size: 0.7rem;
+        color: var(--text-muted);
+    }
+
+    .resource-link {
+        font-size: 0.8rem;
+        color: var(--accent-blue);
+        transition: color 0.2s;
+    }
+
+    .resource-card:hover .resource-link { color: var(--accent-green); }
+
+    /* Cheat sheet */
+    .cheat-section-title {
+        font-family: var(--font-display);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    /* Glossary */
+    .glossary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .glossary-item {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-lg);
+        padding: 1rem;
+    }
+
+    .glossary-term {
+        font-family: var(--font-code);
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--accent-green);
+        margin-bottom: 0.4rem;
+    }
+
+    .glossary-def {
+        font-size: 0.825rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
+    }
+</style>
+{% endblock %}

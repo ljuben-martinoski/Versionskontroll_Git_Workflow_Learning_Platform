@@ -1,0 +1,389 @@
+{% extends "git_learning/base.html" %}
+
+{% block title %}Collaboration Practices{% endblock %}
+
+{% block page_header %}
+<header class="page-header">
+    <div class="page-header-inner">
+        <div class="page-badge">🤝 Collaboration</div>
+        <h1 class="page-title">{{ page_title }}</h1>
+        <p class="page-description">{{ page_description }}</p>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="main-content">
+
+    {# ================================================================
+       PULL REQUESTS GUIDE
+    ================================================================ #}
+    <section class="mb-8" id="pull-requests">
+        <h2 class="section-heading">{{ pr_guide.title }}</h2>
+        <p class="text-muted text-small mb-6" style="margin-bottom:1.5rem;">{{ pr_guide.tagline }}</p>
+
+        {# PR CREATION STEPS #}
+        <div class="card mb-6">
+            <h3 class="card-title mb-6" style="margin-bottom:1.5rem;">Step-by-Step: Creating a Pull Request</h3>
+            {% for step in pr_guide.creation_steps %}
+            <div class="step">
+                <div class="step-number">{{ step.step }}</div>
+                <div class="step-content">
+                    <h4>{{ step.action }}</h4>
+                    {% if step.command %}
+                    <div class="code-block" data-lang="bash" style="margin: 0.5rem 0;">{{ step.command }}</div>
+                    {% endif %}
+                    <p>💡 {{ step.tip }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {# PR TEMPLATE #}
+        <div class="card">
+            <h3 class="card-title mb-6" style="margin-bottom:1.5rem;">📝 The Perfect PR Description Template</h3>
+            {% for section in pr_guide.pr_template.sections %}
+            <div class="pr-template-section">
+                <div class="pr-template-heading">{{ section.heading }}</div>
+                <div class="pr-template-guidance">{{ section.guidance }}</div>
+                <div class="pr-template-example">{{ section.example }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# ================================================================
+       CODE REVIEW GUIDE
+    ================================================================ #}
+    <section class="mb-8" id="code-review" data-tabs>
+        <h2 class="section-heading">{{ code_review_guide.title }}</h2>
+        <p class="text-muted text-small mb-6" style="margin-bottom:1.5rem;">{{ code_review_guide.tagline }}</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="checklist">📋 Reviewer Checklist</button>
+            <button class="tab-btn" data-tab="giving">💬 Giving Feedback</button>
+            <button class="tab-btn" data-tab="receiving">🙏 Receiving Feedback</button>
+        </div>
+
+        {# CHECKLIST TAB #}
+        <div class="tab-panel active" data-panel="checklist">
+            <div class="checklist-grid">
+                {% for category in code_review_guide.reviewer_checklist %}
+                <div class="checklist-card">
+                    <div class="checklist-header">
+                        <span class="checklist-emoji">{{ category.emoji }}</span>
+                        <span class="checklist-title">{{ category.category }}</span>
+                    </div>
+                    <ul class="styled-list">
+                        {% for item in category.items %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# GIVING FEEDBACK TAB #}
+        <div class="tab-panel" data-panel="giving">
+            <div class="feedback-list">
+                {% for tip in code_review_guide.giving_feedback_tips %}
+                <div class="feedback-tip">
+                    <span class="feedback-dot giving">●</span>
+                    <span>{{ tip }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {# RECEIVING FEEDBACK TAB #}
+        <div class="tab-panel" data-panel="receiving">
+            <div class="feedback-list">
+                {% for tip in code_review_guide.receiving_feedback_tips %}
+                <div class="feedback-tip">
+                    <span class="feedback-dot receiving">●</span>
+                    <span>{{ tip }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    {# ================================================================
+       MERGE CONFLICTS GUIDE
+    ================================================================ #}
+    <section class="mb-8" id="merge-conflicts">
+        <h2 class="section-heading">{{ merge_conflict_guide.title }}</h2>
+        <p class="text-muted text-small" style="margin-bottom:1.5rem;">{{ merge_conflict_guide.tagline }}</p>
+
+        <div class="grid-2 mb-6">
+
+            {# Conflict anatomy box #}
+            <div class="card">
+                <h3 class="card-title mb-4" style="margin-bottom:1rem;">What a Conflict Looks Like</h3>
+                <p class="text-muted text-small mb-4" style="margin-bottom:1rem; font-size:0.85rem;">
+                    {{ merge_conflict_guide.conflict_anatomy.explanation }}
+                </p>
+
+                <div class="conflict-display">
+                    <div class="conflict-line conflict-ours">
+                        <span class="conflict-marker">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</span>
+                        <span class="conflict-label">Your version</span>
+                    </div>
+                    <div class="conflict-line conflict-content-ours">Welcome to our amazing website!</div>
+                    <div class="conflict-line conflict-divider">
+                        <span class="conflict-marker">=======</span>
+                        <span class="conflict-label">Divider</span>
+                    </div>
+                    <div class="conflict-line conflict-content-theirs">Hello there, welcome to our site!</div>
+                    <div class="conflict-line conflict-theirs">
+                        <span class="conflict-marker">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/update-text</span>
+                        <span class="conflict-label">Their version</span>
+                    </div>
+                </div>
+
+                <div class="conflict-parts mt-4">
+                    {% for part in merge_conflict_guide.conflict_anatomy.parts %}
+                    <div class="conflict-part-row">
+                        <code class="conflict-part-marker">{{ part.marker }}</code>
+                        <span class="conflict-part-means text-muted text-xs">{{ part.means }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# Prevention strategies #}
+            <div class="card">
+                <h3 class="card-title mb-4" style="margin-bottom:1rem;">🛡️ Prevention Strategies</h3>
+                <ul class="styled-list">
+                    {% for strategy in merge_conflict_guide.prevention_strategies %}
+                    <li>{{ strategy }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+        {# Resolution Steps #}
+        <div class="card">
+            <h3 class="card-title mb-6" style="margin-bottom:1.5rem;">🔧 How to Resolve a Conflict</h3>
+            {% for step in merge_conflict_guide.resolution_steps %}
+            <div class="step">
+                <div class="step-number">{{ step.step }}</div>
+                <div class="step-content">
+                    <h4>{{ step.action }}</h4>
+                    {% if step.command %}
+                    <div class="code-block" data-lang="bash" style="margin: 0.5rem 0;">{{ step.command }}</div>
+                    {% endif %}
+                    <p>{{ step.detail }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {# ================================================================
+       GENERAL COLLABORATION PRACTICES
+    ================================================================ #}
+    <section class="mb-8">
+        <h2 class="section-heading">More Collaboration Best Practices</h2>
+        <div class="grid-3">
+            {% for practice in practices %}
+            <div class="card practice-card">
+                <div class="practice-emoji">{{ practice.emoji }}</div>
+                <div class="practice-level">{{ practice.level }}</div>
+                <h3 class="practice-title">{{ practice.title }}</h3>
+                <p class="practice-description">{{ practice.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}
+
+
+{% block extra_head %}
+<style>
+    /* PR template sections */
+    .pr-template-section {
+        border-left: 2px solid var(--border-default);
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        border-radius: 0 var(--radius-md) var(--radius-md) 0;
+        background: var(--bg-tertiary);
+    }
+
+    .pr-template-heading {
+        font-family: var(--font-code);
+        font-size: 0.85rem;
+        color: var(--accent-purple);
+        margin-bottom: 0.3rem;
+    }
+
+    .pr-template-guidance {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.3rem;
+    }
+
+    .pr-template-example {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-style: italic;
+        white-space: pre-line;
+    }
+
+    /* Checklist */
+    .checklist-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+
+    .checklist-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-lg);
+        padding: 1.25rem;
+    }
+
+    .checklist-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .checklist-emoji { font-size: 1.5rem; }
+
+    .checklist-title {
+        font-family: var(--font-display);
+        font-size: 0.9rem;
+        font-weight: 700;
+    }
+
+    /* Feedback lists */
+    .feedback-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-default);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+    }
+
+    .feedback-tip {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: var(--text-secondary);
+    }
+
+    .feedback-dot {
+        flex-shrink: 0;
+        margin-top: 0.3rem;
+        font-size: 0.5rem;
+    }
+
+    .feedback-dot.giving { color: var(--accent-blue); }
+    .feedback-dot.receiving { color: var(--accent-purple); }
+
+    /* Conflict display */
+    .conflict-display {
+        font-family: var(--font-code);
+        font-size: 0.8rem;
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        border: 1px solid var(--border-default);
+    }
+
+    .conflict-line {
+        padding: 0.35rem 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .conflict-ours, .conflict-content-ours {
+        background: rgba(63, 185, 80, 0.08);
+    }
+
+    .conflict-ours .conflict-marker { color: var(--accent-green); }
+
+    .conflict-divider { background: var(--bg-tertiary); }
+    .conflict-divider .conflict-marker { color: var(--text-muted); }
+
+    .conflict-theirs, .conflict-content-theirs {
+        background: rgba(248, 81, 73, 0.08);
+    }
+
+    .conflict-theirs .conflict-marker { color: var(--accent-red); }
+
+    .conflict-content-ours { color: var(--accent-green); }
+    .conflict-content-theirs { color: var(--accent-red); }
+
+    .conflict-label {
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .conflict-parts { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .conflict-part-row {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .conflict-part-marker {
+        font-family: var(--font-code);
+        font-size: 0.7rem;
+        color: var(--accent-blue);
+        background: transparent;
+        padding: 0;
+        flex-shrink: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+
+    .conflict-part-means { line-height: 1.4; }
+
+    /* Practice cards */
+    .practice-card { text-align: left; }
+
+    .practice-emoji { font-size: 2rem; margin-bottom: 0.5rem; }
+
+    .practice-level {
+        font-family: var(--font-code);
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent-purple);
+        margin-bottom: 0.5rem;
+    }
+
+    .practice-title {
+        font-family: var(--font-display);
+        font-size: 0.95rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .practice-description {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .mt-4 { margin-top: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+</style>
+{% endblock %}
