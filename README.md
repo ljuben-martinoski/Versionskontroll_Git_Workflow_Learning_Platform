@@ -95,7 +95,7 @@ Admin panel is available at `/admin/`.
 | `/collaboration/` | PR guide, code review checklist, merge conflict steps |
 | `/documentation/` | External resources and SOLID principles reference |
 
-## Database Models
+## Database Models.
 
 - **GitResource** - stores categorised learning resources (title, URL, category, ordering)
 - **LearningNote** - personal notes organised by topic (branching, commits, merging, pull requests)
